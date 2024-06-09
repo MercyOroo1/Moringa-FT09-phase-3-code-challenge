@@ -83,15 +83,14 @@ class Magazine:
             return None
         else:
             return [{"authors_id": row[0], "authors_name": row[1]} for row in authors_data]
+    def __repr__(self):
+        return f'<Magazine {self._name}>'
 
-# Create a Magazine object
-magazine1 = Magazine(1, "Magazine 1", "Category 1")
 
-# Add the magazine to the database
-magazine1.add_mag_to_db()
+# magazine1.add_mag_to_db()
 
-# Retrieve the magazine's articles, contributors, article titles, and contributing authors
-print(magazine1.magazine_articles())
-print(magazine1.magazine_contributors())
-print(magazine1.article_titles())
-print(magazine1.contributing_authors())
+
+# print(magazine1.magazine_articles())
+# print(magazine1.magazine_contributors())
+# print(magazine1.article_titles())
+# print(magazine1.contributing_authors())

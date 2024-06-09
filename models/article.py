@@ -5,7 +5,6 @@ cursor = conn.cursor()
 class Article:
     def __init__(self, id, title, content, author_id, magazine_id):
         self.id = id
-        self._title = None
         self.title = title
         self.content = content
         self.author_id = author_id
@@ -18,19 +17,11 @@ class Article:
     
     @title.setter
     def title(self, title):
-        if not hasattr(self, '_id') or self._id is None:  
-            if isinstance(title, str) and 5 <= len(title) <= 50:
-                self._title = title
-            else:
-                raise ValueError("Title must be a string between 5 and 50 characters inclusive")
-        else:  
-            if hasattr(self, '_title'):  
-                raise AttributeError("Title cannot be changed once initialized")
-            else:
-                if isinstance(title, str) and 5 <= len(title) <= 50:
-                    self._title = title
-                else:
-                    raise ValueError("Title must be a string between 5 and 50 characters inclusive")
+      if hasattr(self, '_name'):
+        raise AttributeError("Title cannot be changed after initialization")
+      if not isinstance(title, str) and 5 <= len(title) <= 50:
+         raise ValueError("Title must be a string between 5 and 50 characters inclusive")
+      self._title = title
 
     @property
     def author(self):

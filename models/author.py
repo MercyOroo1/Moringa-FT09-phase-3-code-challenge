@@ -5,9 +5,10 @@ cursor = conn.cursor()
 
 class Author:
     def __init__(self,id,name):
-        self._name = name
-        self.add_author_to_db()
         self.id = id
+        self.name = name
+        self.add_author_to_db()
+       
 
     @property
     def id(self):
@@ -26,17 +27,15 @@ class Author:
 
     @name.setter
     def name(self, name):
-     if self.find_by_id(self.id):
-        if not hasattr(self, '_name'):
-            if not isinstance(name, str) or len(name) == 0:
-                raise ValueError("Name must be a non-empty string")
-            self._name = name
-        else:
-            raise AttributeError("Author name cannot be changed after initialization")
+     if hasattr(self, '_name'):
+        raise AttributeError("Author name cannot be changed after initialization")
+     if not isinstance(name, str) or len(name) == 0:
+        raise ValueError("Name must be a non-empty string")
+     self._name = name
 
     def add_author_to_db(self):
             sql = "INSERT INTO authors (name) VALUES (?)"
-            cursor.execute(sql, (self._name,))
+            cursor.execute(sql, (self.name,))
             conn.commit()
     def find_by_id (self,id):
         sql = """SELECT name FROM authors WHERE id = ?"""
@@ -67,8 +66,9 @@ class Author:
         cursor.execute(sql,(id,))
         magazine_details = cursor.fetchall()
         return [{"magazine_id": row[0], "magazine_name": row[1]} for row in magazine_details] if magazine_details else None
-    
 
+    def __repr__(self):
+        return f'<Author {self.name}>'
 # author = Author(1,"Mercy")
 # print(author.find_by_id(20))
 # print(author.articles(1))

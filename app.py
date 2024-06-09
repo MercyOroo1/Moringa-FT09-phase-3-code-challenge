@@ -24,6 +24,10 @@ def main():
         The following is just for testing purposes, 
         you can modify it to meet the requirements of your implmentation.
     '''
+    # #delete
+    # cursor.execute('DELETE FROM authors')
+    # cursor.execute('DELETE FROM articles')
+    # cursor.execute('DELETE FROM magazines')
 
     # Create an author
     cursor.execute('INSERT INTO authors (name) VALUES (?)', (author_name,))
