@@ -23,12 +23,12 @@ class Article:
          raise ValueError("Title must be a string between 5 and 50 characters inclusive")
       self._title = title
 
-    def author_name(self):
+    def author_name(self,id):
      sql = """SELECT authors.id, authors.name FROM authors 
              INNER JOIN articles
              ON authors.id = articles.author_id
              WHERE articles.id = ?"""
-     cursor.execute(sql, (self._id,))
+     cursor.execute(sql, (id,))
      result = cursor.fetchone()
      if result:
         return result[1]
@@ -65,7 +65,3 @@ class Article:
     def __repr__(self):
         return f'<Article {self.title}>'
 
-# # article = Article(12,"qwerty","qwertyuio",2,1)
-# article = Article(1,"sdfqw","sqedf",2,2)
-# print(article.author)
-# print(article.magazine)

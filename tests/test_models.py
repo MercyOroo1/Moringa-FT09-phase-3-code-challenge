@@ -69,7 +69,7 @@ class TestModels(unittest.TestCase):
         magazine.save()
         article = Article(1, "Test Title", "Test Content", 1, 1)
         article.save()
-        self.assertEqual(article.author_name(), "John Doe")
+        self.assertEqual(article.author_name(1), "John Doe")
     def test_article_magazine_names(self):
         author = Author(1,"John Doe")
         author.save()
