@@ -9,22 +9,17 @@ class Magazine:
         self._category = category
 
 
-
-    def add_mag_to_db(self):
-        sql = """INSERT INTO magazines(name, category) VALUES (?,?)"""
-        CURSOR.execute(sql, (self._name, self._category))
+    def save(self):
+        CURSOR.execute("SELECT id FROM magazines WHERE id = ?", (self._id,))
+        if CURSOR.fetchone():
+                raise ValueError(f"Article with id {self._id} already exists")
+        sql = """
+         INSERT INTO magazines (
+         id, name, category)  
+         VALUES (?, ?, ?)  
+        """
+        CURSOR.execute(sql,(self._id, self._name ,self._category))
         CONN.commit()
-
-   
-    def find_by_id(self, id):
-        sql = """SELECT name FROM magazines WHERE id = ?"""
-        CURSOR.execute(sql, (id,))
-        row = CURSOR.fetchone()
-        if row:
-            self._name = row[0]
-            return self._name
-        else:
-            raise ValueError(f"There is no magazine with Id {id} in the database")
 
     def find_cat_from_db(self, id):
         sql = """SELECT category FROM magazines WHERE id = ?"""
@@ -44,7 +39,7 @@ class Magazine:
                 WHERE magazines.id = ?"""
         CURSOR.execute(sql, (self._id,))
         article_details = CURSOR.fetchall()
-        return [{"magazine_name": row[0], "article_id": row[1], "article_title": row[2]} for row in article_details]
+        return [row[2] for row in article_details]
 
     def magazine_contributors(self):
         sql = """SELECT authors.id, authors.name, magazines.name FROM authors
@@ -53,7 +48,7 @@ class Magazine:
                WHERE magazines.id = ?"""
         CURSOR.execute(sql, (self._id,))
         contributors = CURSOR.fetchall()
-        return [{"authors_id": row[0], "authors_name": row[1], "magazine_name": row[2]} for row in contributors]
+        return [row[1] for row in contributors]
 
     def article_titles(self):
         sql = """SELECT magazines.name, articles.title FROM articles 
@@ -64,7 +59,7 @@ class Magazine:
         if not titles:
             return None
         else:
-            return [{"magazines_name": row[0], "articles_title": row[1]} for row in titles]
+            return [row[1] for row in titles]
 
     def contributing_authors(self):
         sql = """
@@ -82,7 +77,7 @@ class Magazine:
         if not authors_data:
             return None
         else:
-            return [{"authors_id": row[0], "authors_name": row[1]} for row in authors_data]
+            return [row[1] for row in authors_data]
     def __repr__(self):
         return f'<Magazine {self._name}>'
 

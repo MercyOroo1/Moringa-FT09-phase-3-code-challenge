@@ -4,12 +4,12 @@ cursor = conn.cursor()
 
 class Article:
     def __init__(self, id, title, content, author_id, magazine_id):
-        self.id = id
-        self.title = title
-        self.content = content
-        self.author_id = author_id
-        self.magazine_id = magazine_id
-        self.add_article_to_db()
+        self._id = id
+        self._title = title
+        self._content = content
+        self._author_id = author_id
+        self._magazine_id = magazine_id
+        # self.add_article_to_db()
 
     @property
     def title(self):
@@ -23,46 +23,44 @@ class Article:
          raise ValueError("Title must be a string between 5 and 50 characters inclusive")
       self._title = title
 
-    @property
-    def author(self):
+    def author_name(self):
      sql = """SELECT authors.id, authors.name FROM authors 
              INNER JOIN articles
              ON authors.id = articles.author_id
-             WHERE articles.magazine_id = ?"""
-     cursor.execute(sql, (self.id,))
+             WHERE articles.id = ?"""
+     cursor.execute(sql, (self._id,))
      result = cursor.fetchone()
      if result:
-        return {"author_id": result[0], "author_name": result[1]}
+        return result[1]
      else:
         return None
 
-    @property
-    def magazine(self):
+    def magazine_names(self):
         sql = """SELECT magazines.id, magazines.name FROM magazines
                  INNER JOIN articles
                  ON magazines.id = articles.magazine_id
                  WHERE articles.id = ? """
-        cursor.execute(sql, (self.id,))
+        cursor.execute(sql, (self._id,))
         result = cursor.fetchone()
         if result:
-            return{"magazine_id": result[0],"magazine_name":result[1]}
+            return result[1]
         else:
             return None
         
-    def add_article_to_db(self):
-        sql = """INSERT INTO articles (title,content,author_id,magazine_id) VALUES (?,?,?,?)"""
-        cursor.execute(sql,  (self.title, self.content, self.author_id, self.magazine_id))
-        conn.commit()
     
-    def find_by_id(self):
-        sql = """SELECT title FROM articles WHERE id = ?"""
-        cursor.execute(sql, (self.id,))
-        row = cursor.fetchone()
-        if row:
-            self._title = row[0]
-        else:
-            raise ValueError(f"There is no article with Id {self.id} in the database")
-        return self._title
+    def save(self):
+        cursor.execute("SELECT id FROM articles WHERE id = ?", (self._id,))
+        if cursor.fetchone():
+                raise ValueError(f"Article with id {self._id} already exists")
+        sql = """
+         INSERT INTO articles (
+         id, title, content, author_id, magazine_id)  
+         VALUES (?, ?, ?, ?, ?)  
+        """
+        cursor.execute(sql,(self._id, self._title, self._content,self._author_id,self._magazine_id))
+        conn.commit()
+
+       
 
     def __repr__(self):
         return f'<Article {self.title}>'
